@@ -25,6 +25,9 @@ class player(pygame.sprite.Sprite):
         self.dir =pygame.math.Vector2()
         self.speed =300
 
+        self.target= None 
+        self.target_radius = 350
+
 
         #cooldown
         self.can_shoot = True
@@ -38,7 +41,17 @@ class player(pygame.sprite.Sprite):
             if current_time - self.laser_shoot_time >= self.cooldown_duration:
                 self.can_shoot =True   
 
+    def find_target(self):
+        self.target = None 
 
+        closest_distance = self.target_radius 
+
+        for meteor in meteor_sprite:
+            distance =pygame.Vector2(self.rect.center).distance_to(meteor.rect.center)
+
+            if distance < closest_distance:
+                closest_distance = distance
+                self.target = meteor
 
 
     def update(self,delta_time):
@@ -52,6 +65,8 @@ class player(pygame.sprite.Sprite):
         else:
             self.dir =self.dir    
         self.rect.center += self.dir*self.speed *delta_time
+
+        self.find_target()
         
 
 
@@ -89,7 +104,13 @@ class Meteor(pygame.sprite.Sprite):
         self.word ="meteor"
         self.progress =0
 
+    def receive_letter(self,letter):
+        if letter == self.word[self.progress]:
+            self.progress +=1  
+            if self.progree == len(self.word):
+                return True 
 
+        return False            
 
 
     def  update(self,delta_time):
@@ -158,13 +179,31 @@ while run==True:
            x,y = randint(100,width-100),randint(-200,-100)
            Meteor(meteor,(x,y),(all_sprites ,meteor_sprite))
 
+        if i.type == pygame.KEYDOWN:
+            if player.target:
+                if player.target.receive_letter(i.unicode):
+                    Laser(laser, player.rect.midtop , (all_sprites , laser_sprite))
+                    player.target.kill()
+                    player.target = None
+            
+
     
 
 
+
     all_sprites.update(delta_time)
-    # player.update()
 
     window_name.fill('navy blue') 
+    all_sprites.draw(window_name) 
+ 
+
+    if player.target:
+        pygame.draw.circle(window_name ,"blue" , player.target.rect.center, 35,3)
+
+
+
+    # player.update()
+
 
     pygame.sprite.groupcollide(laser_sprite,meteor_sprite,True,True)
 
@@ -187,12 +226,10 @@ while run==True:
 
 
 
-
-
     # for i in range(40):
     #     window_name.blit(star,i) 
     
-    all_sprites.draw(window_name) 
+    # all_sprites.draw(window_name) 
     
 
 
