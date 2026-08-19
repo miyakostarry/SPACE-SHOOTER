@@ -26,7 +26,7 @@ class player(pygame.sprite.Sprite):
         self.speed =300
 
         self.target= None 
-        self.target_radius = 350
+        self.target_radius = 450
 
 
         #cooldown
@@ -72,7 +72,7 @@ class player(pygame.sprite.Sprite):
 
         just_pressed_key = pygame.key.get_just_pressed()
         if just_pressed_key[pygame.K_SPACE] and self.can_shoot:
-            Laser(laser ,self.rect.midtop ,(all_sprites ,laser_sprite))
+            Laser(laser ,player.rect.midtop ,(all_sprites ,laser_sprite))
             self.can_shoot =False
             self.laser_shoot_time =pygame.time.get_ticks()
 
@@ -97,20 +97,67 @@ class Meteor(pygame.sprite.Sprite):
         self.rect= meteor.get_frect(center = pos) 
 
         self.start_time =pygame.time.get_ticks()
-        self.lifetime=4000
-        self.speed = randint(200,600)
+        self.lifetime=9000
+        self.speed = randint(50,100)
         self.direc=pygame.Vector2(uniform(-0.5,0.5),1).normalize()
 
         self.word ="meteor"
         self.progress =0
 
-    def receive_letter(self,letter):
-        if letter == self.word[self.progress]:
-            self.progress +=1  
-            if self.progree == len(self.word):
-                return True 
 
-        return False            
+
+    def receive_letter(self,letter):
+        if self.progress < len(self.word):
+
+            if letter == self.word[self.progress]:
+                self.progress +=1  
+                if self.progress == len(self.word):
+                    return True 
+
+        return False    
+    def draw_word(self,window_name):
+        text =""
+        for i in range(len(self.word)):
+            if i < self.progress:
+                text += self.word[i]
+            else:
+                text +="_"
+
+        word_font=pygame.font.Font(join("Space shooter","space 1 setup","images","Oxanium-Bold.ttf"),20)        
+
+        progress_text=word_font.render(text,True,(240,255,200))
+
+        box_rect = pygame.Rect(self.rect.centerx - 50, self.rect.top - 45, 100, 50)
+
+
+        pygame.draw.rect(window_name,"black",box_rect,border_radius = 5)
+
+        pygame.draw.rect(window_name,"blue",box_rect,2,border_radius = 5)
+
+        # word_text=font.render(self.word,True,(255,255,200))
+
+        # word_rect = word_text.get_frect(
+        #     center=(box_rect.centerx,box_rect.top + 15)
+        #     )
+        progress_rect = progress_text.get_frect(
+            center=(box_rect.centerx,box_rect.bottom - 15)
+        )
+
+        
+                               
+
+
+
+
+
+        # word_text = font.render(text,True , (240,255,200))
+        # word_rect = word_text.get_frect(midbottom = (self.rect.centerx,self.rect.top-10))
+
+        # window_name.blit(word_text, word_rect)
+        # lets not show the progress word only the word that is being typed
+        
+
+        window_name.blit(progress_text , progress_rect)
 
 
     def  update(self,delta_time):
@@ -119,15 +166,21 @@ class Meteor(pygame.sprite.Sprite):
             self.kill()    
 
 class Laser(pygame.sprite.Sprite):
-    def __init__(self,laser,pos,group):
+    def __init__(self,laser,pos,target_pos,group):
         super().__init__(group)
         self.image=laser
         self.rect=self.image.get_frect(midbottom = pos)
 
+        self.direction = pygame.Vector2(target_pos) - pygame.Vector2(pos)
+
+        if self.direction:
+            self.direction = self.direction.normalize()
+
+        self.speed = 600        
 
     def update(self,delta_time):
         self.rect.y -= 500*delta_time
-        if self.rect.bottom <0:
+        if(self.rect.bottom <0 or self.rect.top > high or self.rect.right < 0 or self.rect.left > width):
             self.kill()   
 
 def score():
@@ -182,7 +235,7 @@ while run==True:
         if i.type == pygame.KEYDOWN:
             if player.target:
                 if player.target.receive_letter(i.unicode):
-                    Laser(laser, player.rect.midtop , (all_sprites , laser_sprite))
+                    Laser(laser, player.rect.midtop ,player.target.rect.center, (all_sprites , laser_sprite))
                     player.target.kill()
                     player.target = None
             
@@ -199,6 +252,7 @@ while run==True:
 
     if player.target:
         pygame.draw.circle(window_name ,"blue" , player.target.rect.center, 35,3)
+        player.target.draw_word(window_name)
 
 
 
@@ -223,6 +277,8 @@ while run==True:
     # pygame.draw.rect(window_name ,'red',player , 10, 10)
 
     # pygame.draw.rect(window_name , "#f8ac1e",text.rect,5,10)       
+
+
 
 
 
