@@ -1,8 +1,8 @@
-# SPACE SHOOTER
+# 🚀 SPACE SHOOTER
 
 A 2D endless space-survival game built with Python and Pygame. Pilot a spaceship, select incoming objects, type their words to fire lasers, and survive for as long as possible. The longer you stay alive, the faster and more frequently enemies arrive.
 
-## Features
+## ✨ Features
 
 * Spaceship movement using arrow keys.
 * Two-frame spaceship animation.
@@ -21,7 +21,7 @@ A 2D endless space-survival game built with Python and Pygame. Pilot a spaceship
 * Local high-score saving.
 * Replay support.
 
-## Controls
+## 🎮 Controls
 
 | Key                     | Action                                 |
 | ----------------------- | -------------------------------------- |
@@ -33,9 +33,76 @@ A 2D endless space-survival game built with Python and Pygame. Pilot a spaceship
 
 You can also click the **PLAY AGAIN** button on the Game Over screen.
 
+## 🛠️ Requirements
 
+* Python 3
+* Pygame Community Edition (`pygame-ce`)
 
-## Gameplay
+Install the dependency:
+
+```bash
+python -m pip install pygame-ce
+```
+
+## 📁 Project Structure
+
+The project expects the following folder structure:
+
+```text
+SPACE-SHOOTER/
+│
+├── code/
+│   └── main.py
+│
+├── shooterSpace/
+│   └── sprites/
+│       ├── spacesheet1-sheet.png
+│       ├── spacesheet2-sheet.png
+│       ├── meteor-sheet.png
+│       ├── earth.-sheet.png
+│       ├── comet.png
+│       ├── mars-sheet.png
+│       └── blackhole-sheet.png
+│
+└── Space shooter/
+    └── space 1 setup/
+        └── images/
+            ├── star.png
+            ├── laser.png
+            └── Oxanium-Bold.ttf
+```
+
+Keep the asset filenames and folder names as shown, or update the corresponding paths in `main.py` if your files are named differently.
+
+## ▶️ Running the Game
+
+Open a terminal in the project root and run:
+
+```bash
+python code/main.py
+```
+
+The game opens in a 1280 × 720 window.
+
+## 🏆 Scoring and Difficulty
+
+Each destroyed enemy awards 10 points.
+
+The game saves your highest score locally in `highscore.txt` and updates it whenever you achieve a new record.
+
+Enemy spawn frequency increases as you survive longer:
+
+| Survival Time        | Spawn Interval |
+| -------------------- | -------------: |
+| Under 20 seconds     |        1200 ms |
+| 20–39 seconds        |        1000 ms |
+| 40–59 seconds        |         800 ms |
+| 60–89 seconds        |         650 ms |
+| 90 seconds and above |         500 ms |
+
+Enemy movement speed also gradually increases over time.
+
+## 🌌 Gameplay
 
 1. Move your spaceship around the screen.
 2. Incoming space objects appear with words above them.
@@ -46,7 +113,7 @@ You can also click the **PLAY AGAIN** button on the Game Over screen.
 7. Avoid collisions and survive for as long as possible.
 8. Try to beat your previous high score!
 
-## Notes
+## 📝 Notes
 
 * High scores are stored locally. There is currently no online leaderboard.
 * The game uses an endless survival mode rather than a fixed-level progression system.
